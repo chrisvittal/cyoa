@@ -1,36 +1,35 @@
 package main
 
 import (
+	"go/doc"
 	"fmt"
-	"log"
 	"os"
-	"text/template"
 )
-
-var defaultTemplateCLI = `
-{{.Title}}:
-{{range .Paragraphs}}{{printf "  %s\n" .}}{{end}}
-{{range .Options}}{{printf "%12s: %s\n" .Arc .Text}}{{end}}
-`
-
-var cliTemplate *template.Template
-
-func init() {
-	cliTemplate = template.Must(template.New("arc").Parse(defaultTemplateCLI))
-}
 
 func StoryCLI(s Story) {
 	next := "intro"
 
 	for arc, ok := s[next]; ok; arc, ok = s[next] {
-		err := cliTemplate.Execute(os.Stdout, arc)
-		if err != nil {
-			log.Fatal(err)
-		}
+		printArc(arc)
 		if len(arc.Options) == 0 {
+			println("    The End.")
 			break
+		} else {
+			fmt.Print("Where to next? ")
+			fmt.Scanf("%s", &next)
+			println()
 		}
-		fmt.Print("Where to next? ")
-		fmt.Scanf("%s", &next)
+	}
+}
+
+func printArc(arc StoryArc) {
+	fmt.Printf("%s:\n", arc.Title)
+	for _, p := range arc.Paragraphs {
+		// This is a hack to allow indents for each paragraph
+		print("    ")
+		doc.ToText(os.Stdout, p, "", "", 80)
+	}
+	for _, o := range arc.Options {
+		fmt.Printf("%12s: %s\n", o.Arc, o.Text)
 	}
 }
