@@ -75,20 +75,26 @@ var defaultTemplateHTML = `
   </style>
 </html>`
 
+// HandlerOption is used to set options for our http.Handler we use to handle
+// going through the story in the webapp.
 type HandlerOption func(h *handler)
 
+// WithTemplate is used to set the template for the handler.
 func WithTemplate(t *template.Template) HandlerOption {
 	return func(h *handler) {
 		h.t = t
 	}
 }
 
+// WithPathFunc is used to set the function that parses the paths in order to
+// look up parts of the Story
 func WithPathFunc(fn func(r *http.Request) string) HandlerOption {
 	return func(h *handler) {
 		h.pathFunc = fn
 	}
 }
 
+// StoryHandler creates a new story with the appropriate options set.
 func StoryHandler(s Story, opts ...HandlerOption) http.Handler {
 	h := handler{s, htmlTemplate, defaultPathFunc}
 	for _, opt := range opts {

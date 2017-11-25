@@ -6,6 +6,7 @@ import (
 	"os"
 )
 
+// StoryCLI is the entry point to the terminal version of the application
 func StoryCLI(s Story) {
 	next := "intro"
 
