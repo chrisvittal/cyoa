@@ -16,7 +16,7 @@ var port int
 
 func init() {
 	flag.BoolVar(&cmdLine, "text", false, "run the application as a commandline app, outputting to the terminal")
-	flag.StringVar(&fileName, "file", "gopher.json", "JSON file containing the story data")
+	flag.StringVar(&fileName, "story", "gopher.json", "JSON file containing the story data")
 	flag.IntVar(&port, "port", 3000, "port to start the CYOA webapp on")
 	flag.Parse()
 }
