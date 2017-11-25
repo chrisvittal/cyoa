@@ -8,12 +8,12 @@ import (
 )
 
 func init() {
-	tpl = template.Must(template.New("arc").Parse(defaultTemplate))
+	htmlTemplate = template.Must(template.New("arc").Parse(defaultTemplateHTML))
 }
 
-var tpl *template.Template
+var htmlTemplate *template.Template
 
-var defaultTemplate = `
+var defaultTemplateHTML = `
 <!DOCTYPE html>
 <html>
 	<head>
@@ -49,7 +49,7 @@ func (h handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		path = path[1:]
 	}
 	if arc, ok := h.s[path]; ok {
-		err := tpl.Execute(w, arc)
+		err := htmlTemplate.Execute(w, arc)
 		if err != nil {
 			log.Print(err)
 			http.Error(w, "Something went wrong...", http.StatusInternalServerError)

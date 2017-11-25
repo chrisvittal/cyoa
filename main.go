@@ -31,7 +31,11 @@ func main() {
 		log.Fatal(err)
 	}
 
-	runServer(story)
+	if cmdLine {
+		runCmdLine(story)
+	} else {
+		runServer(story)
+	}
 }
 
 func runServer(story Story) {
@@ -39,4 +43,12 @@ func runServer(story Story) {
 	log.Print("Starting the server on port:", port)
 
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), h))
+}
+
+func runCmdLine(story Story) {
+	if !(isatty.IsTerminal(os.Stdout.Fd()) || isatty.IsTerminal(os.Stdin.Fd())) {
+		log.Fatal("Input/Output not a terminal, exiting.")
+	}
+
+	StoryCLI(story)
 }
