@@ -28,7 +28,6 @@ func ParseStory(jsn io.Reader) (Story, error) {
 	err := decoder.Decode(&story)
 	if err != nil {
 		return nil, err
-	} else {
-		return story, nil
 	}
+	return story, nil
 }

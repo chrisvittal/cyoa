@@ -75,23 +75,49 @@ var defaultTemplateHTML = `
   </style>
 </html>`
 
-func StoryHandler(s Story) http.Handler {
-	return handler{s}
+type HandlerOption func(h *handler)
+
+func WithTemplate(t *template.Template) HandlerOption {
+	return func(h *handler) {
+		h.t = t
+	}
+}
+
+func WithPathFunc(fn func(r *http.Request) string) HandlerOption {
+	return func(h *handler) {
+		h.pathFunc = fn
+	}
+}
+
+func StoryHandler(s Story, opts ...HandlerOption) http.Handler {
+	h := handler{s, htmlTemplate, defaultPathFunc}
+	for _, opt := range opts {
+		opt(&h)
+	}
+
+	return h
 }
 
 type handler struct {
 	s Story
+	t *template.Template
+	pathFunc func(r *http.Request) string
 }
 
-func (h handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func defaultPathFunc(r *http.Request) string {
 	path := strings.TrimSpace(r.URL.Path)
 	if path == "" || path == "/" {
 		path = "intro"
 	} else {
 		path = path[1:]
 	}
+	return path
+}
+
+func (h handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	path := h.pathFunc(r)
 	if arc, ok := h.s[path]; ok {
-		err := htmlTemplate.Execute(w, arc)
+		err := h.t.Execute(w, arc)
 		if err != nil {
 			log.Print(err)
 			http.Error(w, "Something went wrong...", http.StatusInternalServerError)
