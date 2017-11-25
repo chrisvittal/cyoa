@@ -105,8 +105,8 @@ func StoryHandler(s Story, opts ...HandlerOption) http.Handler {
 }
 
 type handler struct {
-	s Story
-	t *template.Template
+	s        Story
+	t        *template.Template
 	pathFunc func(r *http.Request) string
 }
 
